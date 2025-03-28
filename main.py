@@ -11,13 +11,17 @@ from langchain.memory import ConversationBufferMemory
 from langchain.agents import create_openai_functions_agent, AgentExecutor
 from tools.sql import run_query_tool, list_tables, describe_tables_tool
 from tools.report import write_report_tool
+from handlers.chat_model_start_handler import ChatModelStartHandler
 
 # Load API key
 load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
 
+handler = ChatModelStartHandler()
 # LLM instance
-chat = ChatOpenAI()
+chat = ChatOpenAI(
+    callbacks=[handler]
+)
 
 tables = list_tables()
 
@@ -52,7 +56,7 @@ agent = create_openai_functions_agent(
 # Create agent executor
 agent_executor = AgentExecutor(
     agent=agent,
-    verbose=True,
+    # verbose=True,
     tools=tools,
     memory=memory
 )
